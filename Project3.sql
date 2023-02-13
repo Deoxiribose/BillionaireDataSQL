@@ -76,8 +76,53 @@ JOIN pct_change ON b.main_industry = pct_change.main_industry
 WHERE b.time = 2022
 ORDER BY pct_difference DESC;
 
+--Here are a couple examples if R is needed to plot the data
+
+# visualize the inequality gap between the wealthiest and poorest individuals (bash)
+
+# Load the required libraries
+library(tidyverse)
+
+# Read the data into R
+data <- read.csv("BillList.csv")
+
+# Calculate the minimum and maximum annual income values
+min_income <- min(data$annual_income)
+max_income <- max(data$annual_income)
+
+# Calculate the inequality gap
+gap <- (max_income - min_income) / min_income
+
+# Create the graph
+ggplot(data, aes(x = 1, y = annual_income)) +
+  geom_bar(stat = "identity", width = 0.5, fill = "blue") +
+  geom_hline(yintercept = min_income + gap * min_income, 
+             color = "red", linetype = "dotted") +
+  labs(x = "", y = "Annual Income") +
+  ggtitle(paste("Inequality Gap: ", round(gap * 100, 2), "%"))
 
 
+#2022 Wealth Gap Visualization by Source of Income (scss)
+
+library(ggplot2)
+library(dplyr)
+
+# Load the data into R
+data <- read.csv("BillList.csv")
+
+# Filter data to only include 2022 data
+data_2022 <- filter(data, time == 2022)
+
+# Group data by source of wealth and calculate mean annual income for each group
+grouped_data <- data_2022 %>%
+  group_by(source_of_wealth) %>%
+  summarize(mean_annual_income = mean(annual_income, na.rm = TRUE))
+
+# Plot the data using ggplot2
+ggplot(grouped_data, aes(x = source_of_wealth, y = mean_annual_income)) +
+  geom_bar(stat = "identity", fill = "purple") +
+  labs(x = "Source of Wealth", y = "Mean Annual Income") +
+  ggtitle("Income Gap between Wealthiest and Poorest Individuals in 2022")
 
 
 
